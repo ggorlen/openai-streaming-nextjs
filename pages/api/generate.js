@@ -20,7 +20,17 @@ export default async function (req, res) {
       "Content-Type": "text/event-stream",
     });
     
+    let aborted = false;
+    res.on("close", () => {
+      aborted = true;
+      res.end();
+    });
+
     for await (const chunk of completion) {
+      if (aborted) {
+        break;
+      }
+
       const { content } = chunk.choices[0].delta;
       const data = JSON.stringify({ chunk: content });
       res.write(`data: ${data}\n\n`);
