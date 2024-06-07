@@ -41,7 +41,11 @@ export default function Home() {
 
         for (const subChunk of subChunks) {
           const payload = subChunk.replace(/^data: /, "");
-          setResponse(prev => prev + JSON.parse(payload).chunk);
+          const {chunk} = JSON.parse(payload);
+
+          if (chunk) {
+            setResponse(prev => prev + chunk);
+          }
         }
       }
     } catch (error) {
